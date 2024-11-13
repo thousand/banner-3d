@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Center, OrbitControls, Text3D } from '@react-three/drei';
+
+import { ControlHints } from './ControlHints';
+
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [bannerText, setBannerText] = useState<string>('Hello Vinci4D');
+  const [thiccnessRatio, setThiccnessRatio] = useState<number>(0.5);
+  const [bannerColor, setBannerColor] = useState<string>('#FF00FF');
+  const [lightColor, setLightColor] = useState<string>('#FFFFFF');
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <main id="main">
+        <aside id="controls">
+          <label>
+            Banner Text
+            <input
+              type="input"
+              value={bannerText}
+              onInput={(evt) => {
+                setBannerText(evt.currentTarget.value);
+              }}
+            ></input>
+          </label>
+          <label>
+            Thiccness
+            <input
+              type="range"
+              value={thiccnessRatio}
+              min={0}
+              max={3}
+              step={0.01}
+              onInput={(evt) => {
+                setThiccnessRatio(parseFloat(evt.currentTarget.value));
+              }}
+            ></input>
+          </label>
+          <label>
+            Banner Color
+            <input
+              type="color"
+              value={bannerColor}
+              onInput={(evt) => {
+                setBannerColor(evt.currentTarget.value);
+              }}
+            ></input>
+          </label>
+          <label>
+            Light Color
+            <input
+              type="color"
+              value={lightColor}
+              onInput={(evt) => {
+                setLightColor(evt.currentTarget.value);
+              }}
+            ></input>
+          </label>
+        </aside>
+        <div id="viz-root">
+          <Canvas>
+            <Center>
+              <Text3D
+                font="/quicksand-regular-font.json"
+                height={thiccnessRatio}
+              >
+                {bannerText}
+                <meshPhongMaterial color={bannerColor} />
+              </Text3D>
+            </Center>
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[0, 0, 5]} color={lightColor} />
+            <OrbitControls />
+          </Canvas>
+        </div>
+      </main>
+      <ControlHints />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
