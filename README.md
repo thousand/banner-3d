@@ -1,50 +1,24 @@
-# React + TypeScript + Vite
+# Banner 3D
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project uses Vite for build and dev environment. It is set up to publish to github pages automatically on update of the `main` branch.
 
-Currently, two official plugins are available:
+# Running Locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+It is recommended to use [Volta](https://volta.sh/) to ensure compatible Node.JS and other CLI utils are in use. Otherwise, reference the `volta` property in `package.json` for expected versions.
 
-## Expanding the ESLint configuration
+* run `npm install`
+* run `npm run dev`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+# Functionality
 
-- Configure the top-level `parserOptions` property like this:
+This app displays 3D text of a configured string and allows setting the following properties with dynamic inputs on the page:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+* Banner Text — The text to be displayed
+* Thiccness — Controls the amount of curve and expansion of the text
+* Twisty — The amount the text is twisted along the horizontal axis
+* Text Color — The color of the rendered object
+* Light Color — The color of light shining on the front face of the text
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+The app is displayed in light or dark mode according to the user's OS and browser settings.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Enjoy!

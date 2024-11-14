@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Center, OrbitControls, Text3D } from '@react-three/drei';
+import { Center, FontData, OrbitControls, Text3D } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { ControlHints } from './ControlHints';
 
 import './App.css';
+import FontJSON from './quicksand-regular-font.json';
 
 // make initial text color reasonable based on user preference
 const TEXT_COLOR_INIT = window.matchMedia('(prefers-color-scheme: dark)')
@@ -124,7 +125,7 @@ function App() {
           <Canvas>
             <Center>
               <Text3D
-                font="/quicksand-regular-font.json"
+                font={FontJSON as unknown as FontData}
                 height={thiccnessRatio}
                 bevelEnabled
                 bevelSegments={20}
