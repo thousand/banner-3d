@@ -1,17 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Center, OrbitControls, Text3D } from '@react-three/drei';
+import * as THREE from 'three';
 
 import { ControlHints } from './ControlHints';
 
 import './App.css';
 
+// make initial text color reasonable based on user preference
+const TEXT_COLOR_INIT = window.matchMedia('(prefers-color-scheme: dark)')
+  .matches
+  ? '#CCEEFF'
+  : '#00BBEE';
+
 function App() {
+  const textRef = useRef<THREE.Mesh>(null);
+
   const [bannerText, setBannerText] = useState<string>('Hello Vinci4D');
   const [thiccnessRatio, setThiccnessRatio] = useState<number>(0.5);
-  const [speedFactor, setSpeedFactor] = useState<number>(0.5);
-  const [bannerColor, setBannerColor] = useState<string>('#DDDDDD');
-  const [lightColor, setLightColor] = useState<string>('#DDEEFF');
+  const [twistFactor, setTwistFactor] = useState<number>(0);
+  const [twistFactorPrev, setTwistFactorPrev] = useState<number | null>(null);
+  const [bannerColor, setBannerColor] = useState<string>(TEXT_COLOR_INIT);
+  const [lightColor, setLightColor] = useState<string>('#EEEEEE');
+
+  useEffect(() => {
+    if (textRef.current) {
+      const { geometry } = textRef.current;
+      const q = new THREE.Quaternion();
+      const ltr = new THREE.Vector3(1, 0, 0);
+      const p = geometry.attributes.position.array;
+      const twistDelta =
+        typeof twistFactorPrev === 'number'
+          ? twistFactor - twistFactorPrev
+          : twistFactor;
+
+      for (let i = 0; i < p.length; i += 3) {
+        q.setFromAxisAngle(ltr, p[i] * twistDelta);
+
+        const newPos = new THREE.Vector3(p[i], p[i + 1], p[i + 2]);
+        newPos.applyQuaternion(q);
+
+        p[i] = newPos.x;
+        p[i + 1] = newPos.y;
+        p[i + 2] = newPos.z;
+      }
+
+      geometry.computeVertexNormals();
+      geometry.attributes.position.needsUpdate = true;
+    }
+    // we don't need to respond to `-Prev` here since it's updated at the same time and the twist resets when other attributes change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [twistFactor]);
 
   return (
     <>
@@ -23,6 +62,8 @@ function App() {
               type="input"
               value={bannerText}
               onInput={(evt) => {
+                setTwistFactorPrev(null);
+                setTwistFactor(0);
                 setBannerText(evt.currentTarget.value);
               }}
             ></input>
@@ -36,20 +77,25 @@ function App() {
               max={3}
               step={0.01}
               onInput={(evt) => {
+                setTwistFactorPrev(null);
+                setTwistFactor(0);
                 setThiccnessRatio(parseFloat(evt.currentTarget.value));
               }}
             ></input>
           </label>
           <label>
-            Speeeed
+            Twisty
             <input
               type="range"
-              value={speedFactor}
-              min={0}
-              max={1}
-              step={0.01}
+              value={twistFactor}
+              min={-0.3}
+              max={0.3}
+              step={0.001}
               onInput={(evt) => {
-                setSpeedFactor(parseFloat(evt.currentTarget.value));
+                setTwistFactorPrev(
+                  typeof twistFactorPrev === 'number' ? twistFactor : 0
+                );
+                setTwistFactor(parseFloat(evt.currentTarget.value));
               }}
             ></input>
           </label>
@@ -84,6 +130,7 @@ function App() {
                 bevelSegments={20}
                 bevelSize={thiccnessRatio / 10}
                 bevelThickness={0.5}
+                ref={textRef}
               >
                 {bannerText}
                 <meshPhongMaterial color={bannerColor} />
