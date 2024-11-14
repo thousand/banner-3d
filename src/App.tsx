@@ -9,8 +9,9 @@ import './App.css';
 function App() {
   const [bannerText, setBannerText] = useState<string>('Hello Vinci4D');
   const [thiccnessRatio, setThiccnessRatio] = useState<number>(0.5);
-  const [bannerColor, setBannerColor] = useState<string>('#FF00FF');
-  const [lightColor, setLightColor] = useState<string>('#FFFFFF');
+  const [speedFactor, setSpeedFactor] = useState<number>(0.5);
+  const [bannerColor, setBannerColor] = useState<string>('#DDDDDD');
+  const [lightColor, setLightColor] = useState<string>('#DDEEFF');
 
   return (
     <>
@@ -36,6 +37,19 @@ function App() {
               step={0.01}
               onInput={(evt) => {
                 setThiccnessRatio(parseFloat(evt.currentTarget.value));
+              }}
+            ></input>
+          </label>
+          <label>
+            Speeeed
+            <input
+              type="range"
+              value={speedFactor}
+              min={0}
+              max={1}
+              step={0.01}
+              onInput={(evt) => {
+                setSpeedFactor(parseFloat(evt.currentTarget.value));
               }}
             ></input>
           </label>
@@ -66,13 +80,17 @@ function App() {
               <Text3D
                 font="/quicksand-regular-font.json"
                 height={thiccnessRatio}
+                bevelEnabled
+                bevelSegments={20}
+                bevelSize={thiccnessRatio / 10}
+                bevelThickness={0.5}
               >
                 {bannerText}
                 <meshPhongMaterial color={bannerColor} />
               </Text3D>
             </Center>
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[0, 0, 5]} color={lightColor} />
+            <ambientLight intensity={0.3} />
+            <directionalLight position={[-1, 1, 5]} color={lightColor} />
             <OrbitControls />
           </Canvas>
         </div>
